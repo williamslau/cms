@@ -1,0 +1,31 @@
+<template>
+    <div>
+        <div>
+            版权方信息
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data(){
+            return{
+                formItem:{
+                    name:'',
+                    start:0,
+                    length:10,
+                },
+            }
+        },
+        methods:{
+            pageChange(res){
+                this.formItem.start=res-1;
+            },
+            pageSize(res){
+                this.formItem.length=res;
+            },
+            init(){
+
+            }
+        },
+    }
+</script>
