@@ -11,4 +11,9 @@ export default [
         name: '书籍详情',
         component: bookAdmin.book
     },
+    {
+        path: '/bookList/seeChapter',
+        name: '查看章节',
+        component: bookAdmin.seeChapter
+    },
 ]

@@ -56,6 +56,7 @@ Vue.component('DatePicker', DatePicker);
 Vue.component('Radio', Radio);
 Vue.component('Option', Option);
 Vue.component('Button', Button);
+Vue.component('Modal', Modal);
 Vue.prototype.$Modal = Modal;
 
 

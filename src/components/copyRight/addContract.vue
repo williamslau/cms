@@ -107,26 +107,3 @@
         },
     }
 </script>
-<style>
-.upload{
-    width:240px;
-    height:180px;
-    background: #f2f2f2;
-    text-align:center;
-    cursor: pointer;
-}
-.upload .icon{
-    margin-top:40px;
-    margin-bottom:17px;
-}
-.upload p{
-    font-size:14px;
-    color:#666;
-}
-.upload span{
-    display:block;
-    font-size:12px;
-    line-height:20px;
-    color:#999;
-}
-</style>

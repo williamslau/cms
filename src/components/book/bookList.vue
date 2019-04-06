@@ -1,54 +1,66 @@
 <template>
     <div>
-        <div>
-            <Form :model="formItem" :label-width="100" inline>
-                <Form-item label="频道">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="分类">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="尺度">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="质量">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="状态">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="授权范围">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="书名/作者/站点">
-                    <Input type="text" v-model="formItem.name"></Input>
-                </Form-item>
-                <Form-item>
-                    <Button type="primary" @click="init">搜索</Button>
-                </Form-item>
-            </Form>
-            <Form inline>
-                <Form-item>
-                    <Button type="primary">授权</Button>
-                </Form-item>
-            </Form>
-            <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
-            <div class="clearfix page">
-                <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
-            </div>
+        <Form :model="formItem" :label-width="100" inline>
+            <Form-item label="频道">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="分类">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="尺度">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="质量">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="状态">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="授权范围">
+                <Select v-model="formItem.name" style="width:200px">
+                    <Option value="">请选择</Option>
+                </Select>
+            </Form-item>
+            <Form-item label="书名/作者/站点">
+                <Input type="text" v-model="formItem.name"></Input>
+            </Form-item>
+            <Form-item>
+                <Button type="primary" @click="init">搜索</Button>
+            </Form-item>
+        </Form>
+        <Form inline>
+            <Form-item>
+                <Button type="primary" @click="empowerFn">授权</Button>
+            </Form-item>
+        </Form>
+        <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
+        <div class="clearfix page">
+            <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
         </div>
+        <Modal
+            v-model="empowerShow"
+            title="书籍授权">
+            <div>
+                <Select>
+                    <Option value="">1</Option>
+                    <Option value="">2</Option>
+                </Select>
+            </div>
+            <div slot="footer">
+                <Button @click="cancelFn">取消</Button>
+                <Button type="primary" @click="confirmFn">确认</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <script>
@@ -60,7 +72,6 @@
                     start:0,
                     length:10,
                 },
-                tids:[],
                 columns:[
                     {
                         type: 'selection',
@@ -129,10 +140,20 @@
                 data:[{
                     a:1
                 }],
+                empowerShow:false,
                 pageTotal:0,
             }
         },
         methods:{
+            cancelFn(){
+                this.empowerShow=false;
+            },
+            confirmFn(){
+                this.empowerShow=false;
+            },
+            empowerFn(){
+                this.empowerShow=true;
+            },
             checkChangeFn(e){
                 this.tids=e.map(item=>item.tid);
             },
