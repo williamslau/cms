@@ -3,15 +3,23 @@
         <div>
             <Form :model="formItem" :label-width="100" inline>
                 <Form-item label="书籍来源">
-                    <Input type="text" v-model="formItem.name"></Input>
+                    <Input type="text" v-model="formItem.site"></Input>
                 </Form-item>
                 <Form-item>
                     <Button type="primary" @click="init">搜索</Button>
                 </Form-item>
             </Form>
+            <Form inline>
+                <Form-item>
+                    <Button type="primary" @click="deleteData">删除消息</Button>
+                </Form-item>
+                <Form-item>
+                    <Button type="primary" @click="exportFn">导出消息</Button>
+                </Form-item>
+            </Form>
             <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
             <div class="clearfix page">
-                <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
+                <Page :total="total" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.page" placement="top" show-elevator show-sizer></Page>
             </div>
         </div>
     </div>
@@ -21,93 +29,96 @@
         data(){
             return{
                 formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
+                    site:'',
+                    page:1,
+                    limit:10,
                 },
-                tids:[],
+                ids:[],
                 columns:[
                     {
                         type: 'selection',
                         width: 60,
                         align: 'center'
                     },{
-                        title: '书名',
-                        key: 'a'
+                        title: 'ID',
+                        key: 'id'
                     },{
-                        title: '作者',
-                        key: 'a'
+                        title: '书籍ID',
+                        key: 'book_id'
                     },{
-                        title: '分类',
-                        key: 'a'
+                        title: '书籍名称',
+                        key: 'title'
                     },{
-                        title: '状态',
-                        key: 'a'
-                    },{
-                        title: '章节',
-                        key: 'a'
-                    },{
-                        title: '质量',
-                        key: 'a'
-                    },{
-                        title: '尺度',
-                        key: 'a'
+                        title: '书籍作者',
+                        key: 'author'
                     },{
                         title: '来源',
-                        key: 'a'
-                    },{
-                        title: '授权范围',
-                        key: 'a'
+                        key: 'site'
                     },{
                         title: '更新时间',
-                        key: 'a'
-                    },{
-                        title: '操作',
-                        width: 130,
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
-                                    },
-                                    on:{
-                                        click: () => {
-                                        }
-                                    }
-                                }, '详情'),
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
-                                    },
-                                    on:{
-                                        click: () => {
-                                        }
-                                    }
-                                }, '下载'),
-                            ]);
-                        }
+                        key: 'last_updated_at'
                     }
                 ],
-                data:[{
-                    a:1
-                }],
-                pageTotal:0,
+                data:[],
+                total:0,
             }
         },
+        created(){
+            this.getData();
+        },
         methods:{
+            exportFn(){
+                this.$Modal.confirm({
+                    title: '导出报表',
+                    content:'确认要导出报表？',
+                    onOk:()=>{
+                        var jsonData=JSON.parse(JSON.stringify(this.formItem));
+                        delete jsonData['start'];
+                        delete jsonData['length'];
+                        var jsonArr=[];
+                        for(var name in jsonData){
+                            jsonArr.push(name+'='+jsonData[name]);
+                        }
+                        var jsonStr=jsonArr.join('&');
+                        window.open('/api/break_updates_csv?'+jsonStr);
+                    }
+                });
+            },
+            deleteData(){
+                this.$http.delete('/api/break_updates',{
+                    params:{
+                        id:this.ids.join(',')
+                    }
+                }).then( res => {
+                    this.$Notice.success({
+                        title: '删除断更提醒',
+                        desc: '删除成功'
+                    });
+                    this.getData();
+                })
+            },
+            getData(){
+                this.$http.get('/api/break_updates',{
+                    params:this.formItem
+                }).then( res => {
+                    this.data=res.data.list;
+                    this.total=res.data.total;
+                })
+            },
             checkChangeFn(e){
-                this.tids=e.map(item=>item.tid);
+                this.ids=e.map(item=>item.id);
             },
             pageChange(res){
-                this.formItem.start=res-1;
+                this.formItem.page=res;
+                this.getData();
             },
             pageSize(res){
-                this.formItem.length=res;
+                this.formItem.limit=res;
+                this.getData();
             },
             init(){
-
+                this.formItem.page=1;
+                this.getData();
             }
         },
     }

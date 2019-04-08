@@ -7,7 +7,7 @@ export default [
         component: platform.platform
     },{
         path: '/platform/empower',
-        name: '平台管理',
+        name: '授权管理',
         component: platform.empower
     },
 ]

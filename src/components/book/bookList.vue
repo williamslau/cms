@@ -1,38 +1,21 @@
 <template>
     <div>
         <Form :model="formItem" :label-width="100" inline>
-            <Form-item label="频道">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
-            </Form-item>
-            <Form-item label="分类">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
-            </Form-item>
+            <gender :formItem="formItem"></gender>
             <Form-item label="尺度">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
+                <sexy :formItem="formItem"></sexy>
             </Form-item>
             <Form-item label="质量">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
+                <quality :formItem="formItem"></quality>
             </Form-item>
             <Form-item label="状态">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
+                <status :formItem="formItem"></status>
             </Form-item>
             <Form-item label="授权范围">
-                <Select v-model="formItem.name" style="width:200px">
-                    <Option value="">请选择</Option>
-                </Select>
+                <authRange :formItem="formItem"></authRange>
             </Form-item>
             <Form-item label="书名/作者/站点">
-                <Input type="text" v-model="formItem.name"></Input>
+                <words :formItem="formItem"></words>
             </Form-item>
             <Form-item>
                 <Button type="primary" @click="init">搜索</Button>
@@ -45,7 +28,7 @@
         </Form>
         <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
         <div class="clearfix page">
-            <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
+            <Page :total="total" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.page" placement="top" show-elevator show-sizer></Page>
         </div>
         <Modal
             v-model="empowerShow"
@@ -57,20 +40,27 @@
                 </Select>
             </div>
             <div slot="footer">
-                <Button @click="cancelFn">取消</Button>
+                <Button @click="empowerShow=false">取消</Button>
                 <Button type="primary" @click="confirmFn">确认</Button>
             </div>
         </Modal>
     </div>
 </template>
 <script>
+    import formMod from '../formMod';
     export default {
         data(){
             return{
                 formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
+                    gender_id:'',
+                    cate_id:'',
+                    sexy:'',
+                    quality:'',
+                    status:'',
+                    auth_range:'',
+                    words:'',
+                    page:1,
+                    limit:10,
                 },
                 columns:[
                     {
@@ -78,34 +68,46 @@
                         width: 60,
                         align: 'center'
                     },{
-                        title: '书名',
-                        key: 'a'
+                        title: '书籍ID',
+                        key: 'id'
+                    },{
+                        title: '书籍书名',
+                        key: 'title'
                     },{
                         title: '作者',
-                        key: 'a'
+                        key: 'author'
+                    },{
+                        title: '别名',
+                        key: 'alias'
                     },{
                         title: '分类',
-                        key: 'a'
+                        key: 'cate_title'
+                    },{
+                        title: '主角',
+                        key: 'role'
                     },{
                         title: '状态',
-                        key: 'a'
+                        key: 'status'
                     },{
-                        title: '章节',
-                        key: 'a'
+                        title: '章节数',
+                        key: 'sections'
                     },{
                         title: '质量',
-                        key: 'a'
+                        key: 'quality'
                     },{
                         title: '尺度',
-                        key: 'a'
-                    },{
-                        title: '来源',
-                        key: 'a'
-                    },{
-                        title: '授权范围',
-                        key: 'a'
+                        key: 'sexy'
                     },{
                         title: '更新时间',
+                        key: 'updated_at'
+                    },{
+                        title: '来源',
+                        key: 'origin'
+                    },{
+                        title: '合作模式',
+                        key: 'cooper_mode'
+                    },{
+                        title: '授权范围',
                         key: 'a'
                     },{
                         title: '操作',
@@ -137,16 +139,24 @@
                         }
                     }
                 ],
-                data:[{
-                    a:1
-                }],
+                data:[],
                 empowerShow:false,
-                pageTotal:0,
+                total:0,
             }
         },
+        created(){
+            this.getData();
+            console.log(1);
+        },
         methods:{
-            cancelFn(){
-                this.empowerShow=false;
+            getData(){
+                this.$http.get('/api/books',{
+                    params:this.formItem
+                }).then( res => {
+                    console.log(res);
+                    this.data=res.data.list;
+                    this.total=res.data.total;
+                })
             },
             confirmFn(){
                 this.empowerShow=false;
@@ -158,14 +168,24 @@
                 this.tids=e.map(item=>item.tid);
             },
             pageChange(res){
-                this.formItem.start=res-1;
+                this.formItem.page=res;
+                this.getData();
             },
             pageSize(res){
-                this.formItem.length=res;
+                this.formItem.limit=res;
+                this.getData();
             },
             init(){
 
             }
         },
+        components:{
+            gender:formMod.gender,
+            sexy:formMod.sexy,
+            quality:formMod.quality,
+            status:formMod.status,
+            authRange:formMod.authRange,
+            words:formMod.words
+        }
     }
 </script>

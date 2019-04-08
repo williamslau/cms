@@ -17,38 +17,38 @@
             </Col>
             <Col span="4" class="layout-menu-left" :style="{minHeight:leftHeight}">
                 <Menu active-name="0" theme="primary" width="auto" @on-select="MenuClick">
-                    <Menu-item name="/copyRight">
+                    <MenuItem name="/copyRight">
                         <Icon type="ios-navigate" :size="24"></Icon>
                         <span class="layout-text">版权管理</span>
-                    </Menu-item>
+                    </MenuItem>
                     <Submenu name="0">
                         <template slot="title">
                             <Icon type="ios-keypad" :size="24"></Icon>
                             <span class="layout-text">书籍管理</span>
                         </template>
-                        <Menu-item name="/bookList">书籍列表</Menu-item>
-                        <Menu-item name="/verifyList">审核列表</Menu-item>
+                        <MenuItem name="/bookList">书籍列表</MenuItem>
+                        <MenuItem name="/verifyList">审核列表</MenuItem>
                     </Submenu>
-                    <Menu-item name="/platform">
+                    <MenuItem name="/platform">
                         <Icon type="ios-navigate" :size="24"></Icon>
                         <span class="layout-text">平台管理</span>
-                    </Menu-item>
+                    </MenuItem>
                     <Submenu name="1">
                         <template slot="title">
                             <Icon type="ios-keypad" :size="24"></Icon>
                             <span class="layout-text">数据统计</span>
                         </template>
-                        <Menu-item name="/userData">用户数据</Menu-item>
-                        <Menu-item name="/saleData">销售数据</Menu-item>
+                        <MenuItem name="/userData">用户数据</MenuItem>
+                        <MenuItem name="/saleData">销售数据</MenuItem>
                     </Submenu>
-                    <Menu-item name="/account">
+                    <MenuItem name="/account">
                         <Icon type="ios-navigate" :size="24"></Icon>
                         <span class="layout-text">账户管理</span>
-                    </Menu-item>
-                    <Menu-item name="/remind">
+                    </MenuItem>
+                    <MenuItem name="/remind">
                         <Icon type="ios-navigate" :size="24"></Icon>
                         <span class="layout-text">断更提醒</span>
-                    </Menu-item>
+                    </MenuItem>
                 </Menu>
             </Col>
             <Col span="20">
