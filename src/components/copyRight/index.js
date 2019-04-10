@@ -3,7 +3,8 @@ import contract from './contract.vue'
 import copyRightDetails from './copyRightDetails.vue'
 import contractDetails from './contractDetails.vue'
 import bookListDetails from './bookListDetails.vue'
-import addContract from './addContract.vue'
+import addAbroadContract from './addAbroadContract.vue'
+import addWithinContract from './addWithinContract.vue'
 import addCopyRight from './addCopyRight.vue'
 
 export default{
@@ -12,6 +13,7 @@ export default{
 	copyRightDetails,
 	contractDetails,
 	bookListDetails,
-	addContract,
-	addCopyRight
+	addAbroadContract,
+	addWithinContract,
+	addCopyRight,
 }

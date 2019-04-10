@@ -1,55 +1,9 @@
 <template>
     <div>
         <div>
-            <Form :model="formItem" :label-width="100" inline>
-                <Form-item label="频道">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="分类">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="尺度">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="质量">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="状态">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="授权范围">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="书名/作者/站点">
-                    <Input type="text" v-model="formItem.name"></Input>
-                </Form-item>
-                <Form-item>
-                    <Button type="primary" @click="init">搜索</Button>
-                </Form-item>
-                <Form-item>
-                    <Button type="primary">授权</Button>
-                </Form-item>
-            </Form>
-            <Form inline>
-                <Form-item>
-                    <Button type="primary">授权</Button>
-                </Form-item>
-            </Form>
-            <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
+            <Table border :columns="columns" :data="data"></Table>
             <div class="clearfix page">
-                <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
+                <Page :total="total" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.page" placement="top" show-elevator show-sizer></Page>
             </div>
         </div>
     </div>
@@ -59,85 +13,54 @@
         data(){
             return{
                 formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
+                    page:1,
+                    limit:10,
                 },
-                tids:[],
                 columns:[
                     {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
+                        title: '章节序号',
+                        key: 'idx'
                     },{
-                        title: '书名',
-                        key: 'a'
-                    },{
-                        title: '作者',
-                        key: 'a'
-                    },{
-                        title: '分类',
-                        key: 'a'
-                    },{
-                        title: '状态',
-                        key: 'a'
-                    },{
-                        title: '章节',
-                        key: 'a'
-                    },{
-                        title: '质量',
-                        key: 'a'
-                    },{
-                        title: '尺度',
-                        key: 'a'
-                    },{
-                        title: '来源',
-                        key: 'a'
-                    },{
-                        title: '授权范围',
-                        key: 'a'
-                    },{
-                        title: '更新时间',
-                        key: 'a'
-                    },{
-                        title: '操作',
-                        width: 130,
+                        title: '章节名',
+                        key: 'title',
                         render: (h, params) => {
                             return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
+                                h('p', {
+                                    style:{
+                                        cursor:'pointer',
+                                        color:'#4577bc',
                                     },
                                     on:{
                                         click: () => {
-                                            this.$router.push({path:'/bookList/bookDetails'});
+                                            this.$router.push({path:'/verifyList/seeChapter',query:{id:params.row.id}});
                                         }
                                     }
-                                }, '详情'),
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
-                                    },
-                                    on:{
-                                        click: () => {
-                                        }
-                                    }
-                                }, '下载'),
-                            ]);
+                                }, params.row.title),
+                            ])
                         }
+                    },{
+                        title: '字数',
+                        key: 'words'
+                    },{
+                        title: '更新时间',
+                        key: 'updated_at'
                     }
                 ],
-                data:[{
-                    a:1
-                }],
-                pageTotal:0,
+                data:[],
+                total:0,
             }
         },
+        created(){
+            this.getData();
+        },
         methods:{
-            checkChangeFn(e){
-                this.tids=e.map(item=>item.tid);
+            getData(){
+                this.$http.get(`/api/booktmp/${this.$route.query.id}/chaptertmp`,{
+                    params:this.formItem
+                }).then( res => {
+                    this.data=res.data.list;
+                    this.total=res.data.total;
+                })
             },
             pageChange(res){
                 this.formItem.start=res-1;
@@ -151,3 +74,10 @@
         },
     }
 </script>
+<style scoped>
+    .btn{
+        cursor:pointer;
+        color:#4577bc;
+    }
+</style>
+

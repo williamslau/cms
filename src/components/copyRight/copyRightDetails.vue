@@ -1,8 +1,6 @@
 <template>
     <div>
-        <div>
-            版权方信息
-        </div>
+        版权方信息
     </div>
 </template>
 <script>

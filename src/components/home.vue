@@ -68,96 +68,106 @@
     </div>
 </template>
 <script>
-    export default {
-        data() {
-            return {
-                name:'',
-                leftHeight: null,
-                loadingShow:false,
-            }
+export default {
+    data() {
+        return {
+            name: '',
+            leftHeight: null,
+            loadingShow: false,
+        }
+    },
+    created() {
+        this.leftHeightFn();
+        window.addEventListener('resize', this.leftHeightFn);
+    },
+    methods: {
+        logOffFn() {
+            this.$Modal.confirm({
+                title: '退出登陆',
+                content: '确认要退出登录吗？',
+                onOk: () => {
+                    this.$http.get('/api/logout').then(res => {
+                        if (res.code == 1) {
+                            this.$Notice.success({
+                                title: '退出登陆',
+                                desc: '退出成功'
+                            });
+                            this.$router.push({ path: '/login' });
+                        }
+                    })
+                },
+            });
         },
-        created() {
-            this.leftHeightFn();
-            window.addEventListener('resize', this.leftHeightFn);
+        MenuClick(res) { //导航跳转
+            this.$router.push({ path: res });
         },
-        methods: {
-            logOffFn() {
-                this.$Modal.confirm({
-                    title: '退出登陆',
-                    content: '确认要退出登录吗？',
-                    onOk: () => {
-                        conosle.log(1);
-                    },
-                });
-            },
-            MenuClick(res) { //导航跳转
-                this.$router.push({path: res});
-            },
-            leftHeightFn() {    //可视区高度改变
-                var H = document.documentElement.clientHeight || document.body.clientHeight;
-                this.leftHeight = (H - 62) + 'px';
-            }
+        leftHeightFn() {    //可视区高度改变
+            var H = document.documentElement.clientHeight || document.body.clientHeight;
+            this.leftHeight = (H - 62) + 'px';
         }
     }
+}
 </script>
 <style scoped>
-    /* 顶部样式 */
-    .username {
-        width: 250px;
-    }
-    .username div {
-        margin-top: 5px;
-    }
-    
-    .layout {
-        border: 1px solid #d7dde4;
-        background: #f5f7f9;
-        position: relative;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    /* logo */
-    .logo{
-        height:60px;
-        overflow:hidden;
-    }
-    .logo img{
-        height:40px;
-        margin:10px 20px;
-    }
-    /* 面包屑样式 */
-    .layout-breadcrumb {
-        padding: 10px 15px 0;
-    }
-    /* content位置 */
-    .layout-content {
-        min-height: 600px;
-        margin: 15px;
-        overflow: hidden;
-        background: #fff;
-        border-radius: 4px;
-        padding: 20px;
-    }
-    /* 底部版权信息样式 */
-    .layout-copy {
-        text-align: center;
-        padding: 10px 0 20px;
-        color: #9ea7b4;
-    }
-    /* 导航栏样式 */
-    .layout-menu-left {
-        background: #fff;
-    }
-    /* 头部样式 */
-    .layout-header {
-        line-height: 46px;
-        height: 60px;
-        background: #4577bc;
-        position: relative;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-    }
-    /* 修改ui库样式 */
-    .ivu-btn-text.active, .ivu-btn-text:active,.ivu-btn-text:hover{
-        background-color:transparent;
-    }
+/* 顶部样式 */
+.username {
+	width: 250px;
+}
+.username div {
+	margin-top: 5px;
+}
+
+.layout {
+	border: 1px solid #d7dde4;
+	background: #f5f7f9;
+	position: relative;
+	border-radius: 4px;
+	overflow: hidden;
+}
+/* logo */
+.logo {
+	height: 60px;
+	overflow: hidden;
+}
+.logo img {
+	height: 40px;
+	margin: 10px 20px;
+}
+/* 面包屑样式 */
+.layout-breadcrumb {
+	padding: 10px 15px 0;
+}
+/* content位置 */
+.layout-content {
+	min-height: 600px;
+	margin: 15px;
+	overflow: hidden;
+	background: #fff;
+	border-radius: 4px;
+	padding: 20px;
+}
+/* 底部版权信息样式 */
+.layout-copy {
+	text-align: center;
+	padding: 10px 0 20px;
+	color: #9ea7b4;
+}
+/* 导航栏样式 */
+.layout-menu-left {
+	background: #fff;
+}
+/* 头部样式 */
+.layout-header {
+	line-height: 46px;
+	height: 60px;
+	background: #4577bc;
+	position: relative;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+/* 修改ui库样式 */
+.ivu-btn-text.active,
+.ivu-btn-text:active,
+.ivu-btn-text:hover {
+	background-color: transparent;
+}
 </style>

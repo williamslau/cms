@@ -3,7 +3,7 @@
         <div>
             <Table border :columns="columns" :data="data"></Table>
             <div class="clearfix page">
-                <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
+                <Page :total="total" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.page" placement="top" show-elevator show-sizer></Page>
             </div>
         </div>
     </div>
@@ -13,17 +13,16 @@
         data(){
             return{
                 formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
+                    page:1,
+                    limit:10,
                 },
                 columns:[
                     {
                         title: '章节序号',
-                        key: 'a'
+                        key: 'idx'
                     },{
                         title: '章节名',
-                        key: 'a',
+                        key: 'title',
                         render: (h, params) => {
                             return h('div', [
                                 h('p', {
@@ -33,28 +32,36 @@
                                     },
                                     on:{
                                         click: () => {
-                                            this.$router.push({path:'/bookList/seeChapter'});
+                                            this.$router.push({path:'/bookList/seeChapter',query:{id:params.row.id}});
                                         }
                                     }
-                                }, params.row.b),
+                                }, params.row.title),
                             ])
                         }
                     },{
                         title: '字数',
-                        key: 'a'
+                        key: 'words'
                     },{
                         title: '更新时间',
-                        key: 'a'
+                        key: 'updated_at'
                     }
                 ],
-                data:[{
-                    a:1,
-                    b:2
-                }],
-                pageTotal:0,
+                data:[],
+                total:0,
             }
         },
+        created(){
+            this.getData();
+        },
         methods:{
+            getData(){
+                this.$http.get(`/api/books/${this.$route.query.id}/chapters`,{
+                    params:this.formItem
+                }).then( res => {
+                    this.data=res.data.list;
+                    this.total=res.data.total;
+                })
+            },
             pageChange(res){
                 this.formItem.start=res-1;
             },

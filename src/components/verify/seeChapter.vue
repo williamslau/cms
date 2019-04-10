@@ -33,7 +33,7 @@
             }
         },
         created() {
-            this.$http.get(`/api/chapters/${this.$route.query.id}`).then(res => {
+            this.$http.get(`/api/chaptertmp/${this.$route.query.id}`).then(res => {
                 this.data = res.data;
             })
         },
@@ -43,7 +43,7 @@
                     title: '修改章节',
                     content:'确认要修改章节？',
                     onOk:()=>{
-                        this.$http.put(`/api/chapters/${this.$route.query.id}`, {
+                        this.$http.put(`/api/chaptertmp/${this.$route.query.id}`, {
                             title:this.data.chapter_title,
                             contents:this.data.content,
                             idx:this.data.idx,

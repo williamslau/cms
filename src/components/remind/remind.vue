@@ -25,101 +25,114 @@
     </div>
 </template>
 <script>
-    export default {
-        data(){
-            return{
-                formItem:{
-                    site:'',
-                    page:1,
-                    limit:10,
-                },
-                ids:[],
-                columns:[
-                    {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
-                    },{
-                        title: 'ID',
-                        key: 'id'
-                    },{
-                        title: '书籍ID',
-                        key: 'book_id'
-                    },{
-                        title: '书籍名称',
-                        key: 'title'
-                    },{
-                        title: '书籍作者',
-                        key: 'author'
-                    },{
-                        title: '来源',
-                        key: 'site'
-                    },{
-                        title: '更新时间',
-                        key: 'last_updated_at'
+export default {
+    data() {
+        return {
+            formItem: {
+                site: '',
+                page: 1,
+                limit: 10,
+            },
+            ids: [],
+            columns: [
+                {
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                }, {
+                    title: 'ID',
+                    key: 'id'
+                }, {
+                    title: '书籍ID',
+                    key: 'book_id'
+                }, {
+                    title: '书籍名称',
+                    key: 'title'
+                }, {
+                    title: '书籍作者',
+                    key: 'author'
+                }, {
+                    title: '来源',
+                    key: 'site'
+                }, {
+                    title: '更新时间',
+                    key: 'last_updated_at'
+                }
+            ],
+            data: [],
+            total: 0,
+        }
+    },
+    created() {
+        this.getData();
+    },
+    methods: {
+        exportFn() {
+            this.$Modal.confirm({
+                title: '导出报表',
+                content: '确认要导出报表？',
+                onOk: () => {
+                    var jsonData = JSON.parse(JSON.stringify(this.formItem));
+                    delete jsonData['start'];
+                    delete jsonData['length'];
+                    var jsonArr = [];
+                    for (var name in jsonData) {
+                        jsonArr.push(name + '=' + jsonData[name]);
                     }
-                ],
-                data:[],
-                total:0,
-            }
+                    var jsonStr = jsonArr.join('&');
+                    window.open('/api/break_updates_csv?' + jsonStr);
+                }
+            });
         },
-        created(){
-            this.getData();
-        },
-        methods:{
-            exportFn(){
+        deleteData() {
+            if (this.ids.length) {
                 this.$Modal.confirm({
-                    title: '导出报表',
-                    content:'确认要导出报表？',
-                    onOk:()=>{
-                        var jsonData=JSON.parse(JSON.stringify(this.formItem));
-                        delete jsonData['start'];
-                        delete jsonData['length'];
-                        var jsonArr=[];
-                        for(var name in jsonData){
-                            jsonArr.push(name+'='+jsonData[name]);
-                        }
-                        var jsonStr=jsonArr.join('&');
-                        window.open('/api/break_updates_csv?'+jsonStr);
+                    title: '删除消息',
+                    content: '确认要删除消息？',
+                    onOk: () => {
+                        this.$http.delete('/api/break_updates', {
+                            params: {
+                                id: this.ids.join(',')
+                            }
+                        }).then(res => {
+                            this.$Notice.success({
+                                title: '删除断更提醒',
+                                desc: '删除成功'
+                            });
+                            this.getData();
+                        })
                     }
                 });
-            },
-            deleteData(){
-                this.$http.delete('/api/break_updates',{
-                    params:{
-                        id:this.ids.join(',')
-                    }
-                }).then( res => {
-                    this.$Notice.success({
-                        title: '删除断更提醒',
-                        desc: '删除成功'
-                    });
-                    this.getData();
-                })
-            },
-            getData(){
-                this.$http.get('/api/break_updates',{
-                    params:this.formItem
-                }).then( res => {
-                    this.data=res.data.list;
-                    this.total=res.data.total;
-                })
-            },
-            checkChangeFn(e){
-                this.ids=e.map(item=>item.id);
-            },
-            pageChange(res){
-                this.formItem.page=res;
-                this.getData();
-            },
-            pageSize(res){
-                this.formItem.limit=res;
-                this.getData();
-            },
-            init(){
-                this.formItem.page=1;
-                this.getData();
+            } else {
+                this.$Notice.error({
+                    title: '删除断更提醒',
+                    desc: '请勾选'
+                });
             }
         },
-    }
+        getData() {
+            this.$http.get('/api/break_updates', {
+                params: this.formItem
+            }).then(res => {
+                this.data = res.data.list;
+                this.total = res.data.total;
+            })
+        },
+        checkChangeFn(e) {
+            this.ids = e.map(item => item.id);
+        },
+        pageChange(res) {
+            this.formItem.page = res;
+            this.getData();
+        },
+        pageSize(res) {
+            this.formItem.limit = res;
+            this.getData();
+        },
+        init() {
+            this.formItem.page = 1;
+            this.getData();
+        }
+    },
+}
 </script>

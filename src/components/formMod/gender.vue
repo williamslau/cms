@@ -15,36 +15,38 @@
     </span>
 </template>
 <script>
-    export default {
-	    props:{
-            formItem:{
-                required: true
-            },
+export default {
+    props: {
+        formItem: {
+            required: true
         },
-        data(){
-            return{
-                genderData:[],
-                cateData:[],
+    },
+    data() {
+        return {
+            genderData: [],
+            cateData: [],
+        }
+    },
+    created() {
+        this.getData();
+    },
+    methods: {
+        genderChange(e) {
+            if (e == '' || e == undefined) {
+                this.cateData = [];
+                this.formItem.cate_id = '';
+            } else {
+                this.cateData = this.genderData.filter(res => (res.id == e))[0].children;
             }
         },
-        created(){
-            this.getData();
-        },
-        methods:{
-            genderChange(e){
-                this.formItem.cate_id='';
-                console.log(this.formItem);
-                if(e == '' || e == undefined){
-                    this.cateData=[];
-                }else{
-                    this.cateData=this.genderData.filter(res=>(res.id == e))[0].children;
+        getData() {
+            this.$http.get('/api/categories').then(res => {
+                this.genderData = res.data;
+                if (this.formItem.gender_id != '') {
+                    this.genderChange(this.formItem.gender_id);
                 }
-            },
-            getData(){
-                this.$http.get('/api/categories').then( res => {
-                    this.genderData=res.data;
-                })
-            },
+            })
         },
-    }
+    },
+}
 </script>

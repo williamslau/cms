@@ -40,11 +40,11 @@ Vue.component('Submenu', Submenu);
 Vue.component('Breadcrumb', Breadcrumb);
 Vue.component('BreadcrumbItem', BreadcrumbItem);
 Vue.component('Row', Row);
-Vue.component('Col', Col); 
-Vue.component('Tabs', Tabs); 
-Vue.component('TabPane', TabPane); 
-Vue.component('Card', Card); 
-Vue.component('Upload', Upload); 
+Vue.component('Col', Col);
+Vue.component('Tabs', Tabs);
+Vue.component('TabPane', TabPane);
+Vue.component('Card', Card);
+Vue.component('Upload', Upload);
 Vue.component('Form', Form);
 Vue.component('Form-item', FormItem);
 Vue.component('Page', Page);
@@ -67,18 +67,19 @@ Vue.prototype.$Message = Message;
 router.beforeEach((to, from, next) => {
 	// console.log(to);
 	// console.log(from);
-	next();                                                                                                                                                                     
+	next();
 })
 //交互 axios
 import axios from 'axios'
 //配置post参数
 
 import qs from 'qs';
+Vue.config.productionTip = false;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 axios.interceptors.request.use((config) => {  //配置发送请求的信息
-	if(config.method == 'post' && config.headers['Content-Type'] != 'multipart/form-data'){
-		config.data=qs.stringify(config.data);
+	if (config.method == 'post' && config.headers['Content-Type'] != 'multipart/form-data') {
+		config.data = qs.stringify(config.data);
 	}
 	// store.dispatch('loadingShowFn');
 	return config;
@@ -90,29 +91,28 @@ axios.interceptors.response.use((response) => { //配置请求回来的信息
 	// store.dispatch('loadingHiddenFn');
 	// console.log(router);
 	// console.log(response);
-	switch (response.data.code){
+	switch (response.data.code) {
 		case 0:
 			Notice.error({
 				title: router.history.current.name,
-				desc:response.data.msg
+				desc: response.data.msg
 			});
 			break;
 		case 1:
 			return response.data;
 			break;
 		case -1:
-			router.replace({ path: '/login'});
+			router.replace({ path: '/login' });
 			break;
 	}
 }, function (error) {
 	return Promise.reject(error);
 });
 Vue.prototype.$http = axios;
-Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+	el: '#app',
+	router,
+	components: { App },
+	template: '<App/>'
 })

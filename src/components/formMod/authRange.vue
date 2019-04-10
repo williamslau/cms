@@ -1,5 +1,5 @@
 <template>
-    <Select v-model="formItem.auth_range" style="width:200px">
+    <Select v-model="formItem.auth_range">
         <Option v-for="(item,index) in authRangeOpt" :value="item.value" :key="index">{{item.name}}</Option>
     </Select>
 </template>

@@ -9,5 +9,9 @@ export default [
         path: '/verifyList/verify',
         name: '审核详情',
         component: verify.verify
+    },{
+        path: '/verifyList/seeChapter',
+        name: '审核详情',
+        component: verify.seeChapter
     },
 ]

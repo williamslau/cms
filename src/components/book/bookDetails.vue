@@ -1,98 +1,139 @@
 <template>
     <div>
         <div>
-            <Form :model="formItem" :label-width="100">
+            <Form :label-width="100">
                 <Form-item label="书籍名称">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <Input v-model="data.title" style="width:200px"></Input>
                 </Form-item>
                 <Form-item label="作者">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <Input v-model="data.author" style="width:200px"></Input>
                 </Form-item>
                 <Form-item label="字数">
-                    123456
+                    <Input v-model="data.words" style="width:200px"></Input>
                 </Form-item>
                 <Form-item label="章节">
-                    123
+                    <Input v-model="data.sections" style="width:200px"></Input>
                 </Form-item>
-                <Form-item label="上传封面">
-                    <Upload action="//jsonplaceholder.typicode.com/posts/">
-                        <div class="upload">
-                            <Icon size="32" color="#4676be" class="icon" type="md-add-circle" />
-                            <p>点击上传附件</p>
-                            <span>支持jpg/png/pdf格式<br>不超过1M</span>
-                        </div>
-                    </Upload>
+                <Form-item label="上传封面" class="clearfix">
+                    <img class="fl" :src="data.cover" alt="">
+                    <div class="uploadBtn fl">
+                        <Upload
+                            :action="`/api/books/${this.$route.query.id}/upload_image`"
+                            name="book_cover"
+                            :on-success="fileSuccessFn"
+                            :show-upload-list="false"
+                        >
+                            <div class="upload">
+                                <Icon size="32" color="#4676be" class="icon" type="md-add-circle" />
+                                <p>点击上传附件</p>
+                                <span>支持jpg/png/pdf格式<br>不超过1M</span>
+                            </div>
+                        </Upload>
+                    </div>
                 </Form-item>
                 <Form-item label="简介">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <Input type="textarea" :rows="6" v-model="data.summary"></Input>
                 </Form-item>
                 <Form-item label="主角">
-                    <Input type="text" v-model="formItem.name"></Input>
+                    <Input v-model="data.role" style="width:200px"></Input>
                 </Form-item>
             </Form>
             <Form :label-width="100" inline>
-                <Form-item label="频道">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
-                <Form-item label="分类">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
-                </Form-item>
+                <gender :formItem="data"></gender>
                 <Form-item label="质量">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <quality :formItem="data"></quality>
                 </Form-item>
                 <Form-item label="尺度">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <sexy :formItem="data"></sexy>
                 </Form-item>
             </Form>
             <Form :label-width="100">
                 <Form-item label="添加标签">
-                    <Input type="text" v-model="formItem.name"></Input>
+                    <Input type="text" v-model="data.tags"></Input>
                 </Form-item>
                 <Form-item label="版权来源">
-                    <Input type="text" v-model="formItem.name"></Input>
+                    <Input type="text" v-model="data.site"></Input>
                 </Form-item>
                 <Form-item label="授权范围">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <authRange :formItem="data"></authRange>
                 </Form-item>
                 <Form-item label="状态">
-                    <RadioGroup v-model="formItem.name">
-                        <Radio label="1" disabled>已完结</Radio>
-                        <Radio label="1">连载中</Radio>
-                    </RadioGroup>
+                    <status :formItem="data"></status>
                 </Form-item>
                 <Form-item>
-                    <Button type="primary">确认修改</Button>
+                    <Button type="primary" @click="modifyFn">确认修改</Button>
                 </Form-item>
             </Form>
         </div>
     </div>
 </template>
 <script>
-    export default {
-        data(){
-            return{
-                formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
-                },
+import formMod from '../formMod';
+export default {
+    data() {
+        return {
+            data: {
+                alias: '',
+                auth_range: '',
+                author: '',
+                cate_id: '',
+                cate_title: '',
+                cooper_mode: '',
+                cover: '',
+                created_at: '',
+                deleted_at: '',
+                gender_id: '',
+                gender_title: '',
+                id: '',
+                incr_id: '',
+                mt_author: '',
+                origin: '',
+                origin_id: '',
+                quality: '',
+                role: '',
+                sections: '',
+                sexy: '',
+                site: '',
+                site_id: '',
+                status: '',
+                summary: '',
+                tags: '',
+                title: '',
+                updated_at: '',
+                words: '',
             }
+        }
+    },
+    created() {
+        this.$http.get(`/api/books/${this.$route.query.id}`).then(res => {
+            this.data = res.data;
+        })
+    },
+    methods: {
+        fileSuccessFn(res) {
+            this.data.cover = res.data.file_path;
+            this.$Notice.success({
+                title: '上传图片',
+                desc: '上传成功'
+            });
         },
+        modifyFn() {
+            this.$http.put(`/api/books/${this.$route.query.id}`, this.data).then(res => {
+                console.log(res);
+                this.$Notice.success({
+                    title: '修改书籍详情',
+                    desc: '修改成功'
+                });
+            })
+        }
+    },
+    components: {
+        ...formMod
     }
+}
 </script>
+<style scoped>
+img {
+	width: 200px;
+}
+</style>

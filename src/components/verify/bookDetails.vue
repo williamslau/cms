@@ -1,153 +1,141 @@
 <template>
     <div>
         <div>
-            <Form :model="formItem" :label-width="100" inline>
-                <Form-item label="频道">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+            <Form :label-width="100">
+                <Form-item label="书籍名称">
+                    <Input v-model="data.title" style="width:200px"></Input>
                 </Form-item>
-                <Form-item label="分类">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                <Form-item label="作者">
+                    <Input v-model="data.author" style="width:200px"></Input>
+                </Form-item>
+                <Form-item label="字数">
+                    <Input v-model="data.words" style="width:200px"></Input>
+                </Form-item>
+                <Form-item label="章节">
+                    <Input v-model="data.sections" style="width:200px"></Input>
+                </Form-item>
+                <Form-item label="上传封面" class="clearfix">
+                    <img class="fl" :src="data.cover" alt="">
+                    <div class="uploadBtn fl">
+                        <Upload
+                            :action="`/api/booktmp/${this.$route.query.id}/upload_cover`"
+                            name="book_cover"
+                            :on-success="fileSuccessFn"
+                            :show-upload-list="false"
+                        >
+                            <div class="upload">
+                                <Icon size="32" color="#4676be" class="icon" type="md-add-circle" />
+                                <p>点击上传附件</p>
+                                <span>支持jpg/png/pdf格式<br>不超过1M</span>
+                            </div>
+                        </Upload>
+                    </div>
+                </Form-item>
+                <Form-item label="简介">
+                    <Input type="textarea" :rows="6" v-model="data.summary"></Input>
+                </Form-item>
+                <Form-item label="主角">
+                    <Input v-model="data.role" style="width:200px"></Input>
+                </Form-item>
+            </Form>
+            <Form :label-width="100" inline>
+                <gender :formItem="data"></gender>
+                <Form-item label="质量">
+                    <quality :formItem="data"></quality>
                 </Form-item>
                 <Form-item label="尺度">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <sexy :formItem="data"></sexy>
                 </Form-item>
-                <Form-item label="质量">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+            </Form>
+            <Form :label-width="100">
+                <Form-item label="添加标签">
+                    <Input type="text" v-model="data.tags"></Input>
                 </Form-item>
-                <Form-item label="状态">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                <Form-item label="版权来源">
+                    <Input type="text" v-model="data.site"></Input>
                 </Form-item>
                 <Form-item label="授权范围">
-                    <Select v-model="formItem.name" style="width:200px">
-                        <Option value="">请选择</Option>
-                    </Select>
+                    <authRange :formItem="data"></authRange>
                 </Form-item>
-                <Form-item label="书名/作者/站点">
-                    <Input type="text" v-model="formItem.name"></Input>
+                <Form-item label="状态">
+                    <status :formItem="data"></status>
                 </Form-item>
                 <Form-item>
-                    <Button type="primary" @click="init">搜索</Button>
-                </Form-item>
-                <Form-item>
-                    <Button type="primary">授权</Button>
+                    <Button type="primary" @click="modifyFn">确认修改</Button>
                 </Form-item>
             </Form>
-            <Form inline>
-                <Form-item>
-                    <Button type="primary">授权</Button>
-                </Form-item>
-            </Form>
-            <Table border :columns="columns" @on-selection-change="checkChangeFn" :data="data"></Table>
-            <div class="clearfix page">
-                <Page :total="pageTotal" class="fr" @on-change="pageChange" @on-page-size-change="pageSize" :current="formItem.start+1" placement="top" show-elevator show-sizer></Page>
-            </div>
         </div>
     </div>
 </template>
 <script>
-    export default {
-        data(){
-            return{
-                formItem:{
-                    name:'',
-                    start:0,
-                    length:10,
-                },
-                tids:[],
-                columns:[
-                    {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
-                    },{
-                        title: '书名',
-                        key: 'a'
-                    },{
-                        title: '作者',
-                        key: 'a'
-                    },{
-                        title: '分类',
-                        key: 'a'
-                    },{
-                        title: '状态',
-                        key: 'a'
-                    },{
-                        title: '章节',
-                        key: 'a'
-                    },{
-                        title: '质量',
-                        key: 'a'
-                    },{
-                        title: '尺度',
-                        key: 'a'
-                    },{
-                        title: '来源',
-                        key: 'a'
-                    },{
-                        title: '授权范围',
-                        key: 'a'
-                    },{
-                        title: '更新时间',
-                        key: 'a'
-                    },{
-                        title: '操作',
-                        width: 130,
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
-                                    },
-                                    on:{
-                                        click: () => {
-                                            this.$router.push({path:'/bookList/bookDetails'});
-                                        }
-                                    }
-                                }, '详情'),
-                                h('Button', {
-                                    props: {
-                                        type: 'text',
-                                        size: 'small'
-                                    },
-                                    on:{
-                                        click: () => {
-                                        }
-                                    }
-                                }, '下载'),
-                            ]);
-                        }
-                    }
-                ],
-                data:[{
-                    a:1
-                }],
-                pageTotal:0,
+import formMod from '../formMod';
+export default {
+    data() {
+        return {
+            data: {
+                alias: '',
+                auth_range: '',
+                author: '',
+                cate_id: '',
+                cate_title: '',
+                cooper_mode: '',
+                cover: '',
+                created_at: '',
+                deleted_at: '',
+                gender_id: '',
+                gender_title: '',
+                id: '',
+                incr_id: '',
+                mt_author: '',
+                origin: '',
+                origin_id: '',
+                quality: '',
+                role: '',
+                sections: '',
+                sexy: '',
+                site: '',
+                site_id: '',
+                status: '',
+                summary: '',
+                tags: '',
+                title: '',
+                updated_at: '',
+                words: '',
             }
+        }
+    },
+    created() {
+        this.$http.get(
+            `/api/booktmp/${this.$route.query.id}`
+        ).then(res => {
+            this.data = res.data;
+        })
+    },
+    methods: {
+        fileSuccessFn(res) {
+            this.data.cover = res.data.file_path;
+            this.$Notice.success({
+                title: '上传图片',
+                desc: '上传成功'
+            });
         },
-        methods:{
-            checkChangeFn(e){
-                this.tids=e.map(item=>item.tid);
-            },
-            pageChange(res){
-                this.formItem.start=res-1;
-            },
-            pageSize(res){
-                this.formItem.length=res;
-            },
-            init(){
-
-            }
-        },
+        modifyFn() {
+            this.$http.put(`/api/booktmp/${this.$route.query.id}`, this.data).then(res => {
+                console.log(res);
+                this.$Notice.success({
+                    title: '修改书籍详情',
+                    desc: '修改成功'
+                });
+            })
+        }
+    },
+    components: {
+        ...formMod
     }
+}
 </script>
+<style scoped>
+img {
+	width: 200px;
+}
+</style>

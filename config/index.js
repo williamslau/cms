@@ -12,7 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://192.168.1.81:8000',  //海波
+        // target: 'http://192.168.1.81:2200',  //海波
+        target: 'http://booktest.fengxingss.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'
